@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NovaDrive supplier web</title>
+<meta name="description" content="Interactive multi-tier supply chain network and risk exposure visualization for NovaDrive.">
+<meta property="og:title" content="NovaDrive supplier web">
+<meta property="og:description" content="Interactive multi-tier supply chain network and risk exposure visualization for NovaDrive.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f2eb;
+  --pn:#ffffff;
+  --ink:#1c1917;
+  --mu:#78716c;
+  --ln:#e5e0d8;
+  --ac:#ea580c;
+  --ac-subtle:#fff7ed;
+  --own:#d97706;
+  --nd:#1c1917;
+  --bx:#ede8df;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+:root[data-theme="beige"]{
+  --bg:#f5f2eb;
+  --pn:#ffffff;
+  --ink:#1c1917;
+  --mu:#78716c;
+  --ln:#e5e0d8;
+  --ac:#ea580c;
+  --ac-subtle:#fff7ed;
+  --own:#d97706;
+  --nd:#1c1917;
+  --bx:#ede8df;
+}
+:root[data-theme="white"]{
+  --bg:#ffffff;
+  --pn:#ffffff;
+  --ink:#18181b;
+  --mu:#64748b;
+  --ln:#e2e8f0;
+  --ac:#ea580c;
+  --ac-subtle:#fff7ed;
+  --own:#d97706;
+  --nd:#18181b;
+  --bx:#f8fafc;
+}
+:root[data-theme="dark"]{
+  --bg:#0f0f11;
+  --pn:#18181b;
+  --ink:#f4f4f5;
+  --mu:#a1a1aa;
+  --ln:#27272a;
+  --ac:#f97316;
+  --ac-subtle:#271d18;
+  --own:#fbbf24;
+  --nd:#27272a;
+  --bx:#1f1f23;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Instrument Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Bricolage Grotesque",Georgia,sans-serif;margin:0}
+header{padding:16px 20px 8px;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:baseline}
+h1{font-size:22px;display:inline-flex;align-items:center;gap:8px;font-weight:700;letter-spacing:-0.02em}
+h1::before{content:'';display:inline-block;width:9px;height:9px;border-radius:2px;background:var(--ac)}
+header p{margin:0;color:var(--mu);flex:1 1 320px}
+.bar{display:flex;gap:10px;align-items:center;padding:4px 20px 12px;flex-wrap:wrap;color:var(--mu);font-size:13px}
+.seg button,.tabs button{font:inherit;border:1px solid var(--ln);background:var(--pn);color:var(--ink);padding:5px 12px;cursor:pointer;transition:all 0.15s ease}
+.seg button:first-child{border-radius:6px 0 0 6px}.seg button:last-child{border-radius:0 6px 6px 0}
+.seg button.on,.tabs button.on{background:var(--ac);color:#ffffff;border-color:var(--ac);font-weight:600}
+.seg button:hover:not(.on),.tabs button:hover:not(.on){border-color:var(--ac);color:var(--ac)}
+button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:14px;padding:0 20px 20px}
+@media(max-width:980px){main{grid-template-columns:1fr}}
+.gw{background:var(--pn);border:1px solid var(--ln);border-radius:10px;overflow-x:auto;box-shadow:0 1px 3px rgba(0,0,0,0.02)}
+svg{display:block;width:100%;min-width:760px;height:auto}
+.side{background:var(--pn);border:1px solid var(--ln);border-radius:10px;max-height:calc(100vh - 110px);min-height:420px;overflow:auto;box-shadow:0 1px 3px rgba(0,0,0,0.02)}
+@media(max-width:980px){.side{max-height:none}}
+.tabs{display:flex;position:sticky;top:0;background:var(--pn);z-index:1}.tabs button{flex:1;border-radius:0;border-width:0 0 1px;border-bottom-color:var(--ln)}
+.pad{padding:16px}.pad h2{font-size:18px;margin-bottom:3px;letter-spacing:-0.01em}.pad h3{font-size:13px;text-transform:uppercase;letter-spacing:0.04em;color:var(--mu);margin:16px 0 8px}
+.mu{color:var(--mu)}.sm{font-size:12px}
+.chip{display:inline-block;border:1px solid var(--ln);border-radius:99px;padding:2px 9px;font-size:12px;margin:0 4px 4px 0;background:var(--pn)}
+.row{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:var(--bx);border:1px solid var(--ln);border-radius:6px;padding:7px 10px;margin:0 0 6px;cursor:pointer;transition:border-color 0.15s ease}
+.row:hover{border-color:var(--ac)}div.row{cursor:default}
+.ev{border-left:3px solid var(--ac);padding:3px 0 3px 10px;margin:0 0 10px;background:var(--bx);border-radius:0 4px 4px 0}.ev b{font-weight:600}
+.m{display:grid;grid-template-columns:105px 1fr 34px;gap:8px;align-items:center;font-size:12px;margin:4px 0}
+.m i{display:block;height:7px;border-radius:4px;background:var(--ln);position:relative;overflow:hidden}.m i u{position:absolute;inset:0 auto 0 0;border-radius:4px}
+table{border-collapse:collapse;width:100%}td,th{padding:7px 8px;border-bottom:1px solid var(--ln);text-align:left;font-weight:400}th{color:var(--mu);font-size:12px;text-transform:uppercase;letter-spacing:0.04em}tr[data-k]{cursor:pointer;transition:background 0.1s ease}tr[data-k]:hover{background:var(--bx)}
+.n{cursor:pointer;transition:transform 0.1s ease}.n rect.b{fill:var(--pn);stroke:var(--ln);stroke-width:1.2;transition:stroke 0.15s ease}.n text{fill:var(--ink);pointer-events:none}
+.n:focus-visible rect.b{stroke:var(--ac);stroke-width:2.5;outline:none}
+.n:hover rect.b{stroke:var(--ac)}
+.e{fill:none;stroke:var(--mu);cursor:pointer;transition:stroke 0.15s ease}.eh{fill:none;stroke:transparent;stroke-width:14;cursor:pointer}
+.dim{opacity:.12}.sel rect.b{stroke:var(--ac);stroke-width:2.5}
+.col{fill:var(--mu);font-size:11px;font-weight:600;letter-spacing:0.03em}
+.theme-btn{margin-left:auto;font:inherit;font-size:12px;border:1px solid var(--ln);background:var(--pn);color:var(--ink);padding:3px 9px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s ease}
+.theme-btn:hover{border-color:var(--ac);color:var(--ac)}
+</style>
+</head>
+<body>
+<header>
+  <h1>NovaDrive supplier web</h1>
+  <p>Click any supplier, link or alert to see who supplies whom, the evidence behind it, and how exposed NovaDrive is.</p>
+</header>
+<div class="bar">
+  <span>Colour bar by</span>
+  <span class="seg"><button class="on" data-m="risk">Risk</button><button data-m="conf">Evidence confidence</button></span>
+  <span class="sm">Lines: solid = confirmed · dashed = inferred · dotted = unverified lead · amber = ownership</span>
+  <span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px">
+    <span class="sm">Canvas:</span>
+    <span class="seg theme-seg">
+      <button class="on" data-theme="beige">Beige</button>
+      <button data-theme="white">White</button>
+      <button data-theme="dark">Dark</button>
+    </span>
+  </span>
+</div>
+<main>
+  <div class="gw"><svg id="g" viewBox="0 0 970 640" role="img" aria-label="Supplier network"></svg></div>
+  <aside class="side">
+    <div class="tabs"><button class="on" data-t="i">Inspector</button><button data-t="a">Alerts</button><button data-t="s">Scorecard</button></div>
+    <div class="pad" id="p"></div>
+  </aside>
+</main>
+<script>
+const rows=`AST|Aster Power Assemblies|1|Z02|SITE-018|Power assemblies M10/M20|2.13|2|80.9|2.3|24|27|30|24|C
+BOR|Boreal Power Systems|1|Z05|SITE-025|Power assemblies M10/M20|1.54|3|83.1|2.2|33|31|23|19|C
+COB|Cobalt Control Electronics|1|Z04|SITE-032|Control board C10|2.34|4|83.3|-2.3|42|58|62|52|C
+GRO|Grove Battery Controls|1|Z04|SITE-060|Battery monitor B10|1.51|1.33|78.8|-.9|18|58|62|52|C
+HSE|HarborSense Electronics|1|Z05|SITE-067|Battery monitor B10|2.24|2.33|81.9|-.9|27|31|23|19|C
+DCW|Delta Capacitor Works|1|Z03|SITE-039|Capacitor C20|1.82|1.67|86.9|2.2|51|19|26|25|C
+EST|Estuary Thermal Systems|1|Z06|SITE-046|Cooling assembly H20|2.53|2.67|89.7|1.8|60|67|59|54|C
+FOR|ForgeLine Enclosures|1|Z02|SITE-053|Housing H10|1.94|3.67|89.8|-.3|69|27|30|24|C
+ION|IonPeak Semiconductor|2|Z01|SITE-074|Power semiconductor dies|1.8|2.4|85.2|-8.8|36|82|76|71|C
+LUM|Lumen Magnetics|2|Z04|SITE-095|Magnetic cores|1.37|3|89.5|-.6|63|58|62|52|C
+ORI|Orion Ceramics|2|Z01|SITE-116|Ceramic substrates|2.29|2.67|82.2|.7|30|82|76|71|C
+JAD|Jade Printed Circuits|2|Z01|SITE-081|Printed circuit substrates|1.55|3.1|86.6|-6.4|45|82|76|71|C
+KES|Kestrel Microdevices|2|Z05|SITE-088|Microcontrollers|1.86|2|87.3|1.6|54|31|23|19|C
+RIL|Rill Connectors|2|Z04|SITE-137|Connectors|2.04|2.33|89.3|.3|57|58|62|52|C
+SOL|Solace Optics|2|Z08|SITE-144|Isolation optics|-|-|91.7|-.3|-|39|47|41|H
+MER|Meridian Dielectrics|2|Z03|SITE-102|Dielectric film|.62|7.2|76.4|-17.6|72|19|26|25|C
+NAC|Nacre Foils|2|Z06|SITE-109|Aluminum foil|1.54|1.67|79.3|-3.5|21|67|59|54|C
+PIN|Pine Thermal Metals|2|Z06|SITE-123|Thermal metals|1.79|3.67|85.6|.8|39|67|59|54|C
+QUA|Quartz Alloy|2|Z02|SITE-130|Aluminum alloy|2.43|1.33|84.6|-2.1|48|27|30|24|C
+UMB|Umber Silicon Carbide|3|Z01|SITE-158|SiC wafers|-|-|80.5|-2.2|-|82|76|71|C
+VER|Verdant Process Gases|3|Z01|SITE-165|Process gases|-|-|81.9|-.9|-|82|76|71|K
+YAR|Yarrow Specialty Minerals|3|Z08|SITE-186|Specialty minerals|-|-|90.1|-1.2|-|39|47|41|C
+WAR|Warden Copper Foil|3|Z06|SITE-172|Copper foil|-|-|87.4|1.8|-|67|59|54|C
+XEN|Xenon Resin|3|Z04|SITE-179|Resin|-|-|87.3|1.8|-|58|62|52|C
+ZEN|Zenith Polymer|3|Z03|SITE-193|Polymer|-|-|90.9|-.9|-|19|26|25|C
+ALD|Alder Bauxite|3|?|?|Not in supplier universe|-|-|-|-|-|-|-|-|L
+CSH|CommonSpan Holdings|0|Z05|SITE-221|Parent of Aster and Boreal|2.04|1|87.6|-1.1|45|31|23|19|O`;
+const N={};rows.split('\n').forEach(r=>{const a=r.split('|'),v=i=>a[i]=='-'?null:+a[i];N[a[0]]={k:a[0],name:a[1],tier:+a[2],zone:a[3],site:a[4],cap:a[5],cr:v(6),nd:v(7),tl:v(8),ch:v(9),agi:v(10),hz:v(11),lg:v(12),inf:v(13),st:a[14],w:176,h:40}});
+const ordC=['UMB','VER','YAR','WAR','XEN','ZEN','ALD'],ordB=['ION','LUM','ORI','JAD','KES','RIL','SOL','MER','NAC','PIN','QUA'],ordA=['AST','BOR','COB','GRO','HSE','DCW','EST','FOR'];
+[[ordC,14,50,84],[ordB,240,50,54],[ordA,470,50,74]].forEach(([o,x,y0,s])=>o.forEach((k,i)=>{N[k].x=x;N[k].y=y0+i*s}));
+N.NDT={k:'NDT',name:'NovaDrive',cap:'Manufacturer (Harbor, Plateau, Coastal Works)',tier:-1,st:'C',x:700,y:300,w:100,h:60};
+N.CSH.x=680;N.CSH.y=8;N.CSH.w=150;
+const PR={P1:['DriveCore inverter',624],P2:['ChargeBridge charger',520],P3:['StoreLink cabinet',416]};
+['P1','P2','P3'].forEach((p,i)=>N[p]={k:p,name:p+' '+PR[p][0].split(' ')[0],cap:PR[p][0]+' · $'+PR[p][1]+'m',tier:-2,st:'C',x:860,y:210+i*110,w:100,h:44});
+const T1P={AST:'P1P2P3',BOR:'P1P2P3',COB:'P1P2P3',DCW:'P1P2',EST:'P2P3',FOR:'P1',GRO:'P3',HSE:'P3'};
+const SUB={AST:70,BOR:40,COB:100,DCW:100,EST:100,FOR:100,GRO:80,HSE:20,ION:100,JAD:100,CSH:100};
+const SD='Disclosure names the customer program only; no volumes, spend or inventory are given.';
+const X78=['FAM-DOC-078','2025-09-15','Joint technical statement','Aster and Boreal M10/M20 both use the same qualified IonPeak die family from SITE-074. No second die source is qualified, so a different module assembler gives no independent die supply.'];
+const X79=['FAM-DOC-079','2025-08-14','Technical program register','Cobalt C10 and Grove/HarborSense B10 programs all use Jade substrates from SITE-081. No independent qualified substrate exists in the supplied corpus.'];
+const E=[
+['AST','NDT','M10 · M20','C','DOC-001P,DOC-002Q,DOC-003P,DOC-004Q,SHP-00002S','About 60% of M10 (P1,P3) and 70% of M20 (P2). Allocations are planning shares, not realised purchases.'],
+['BOR','NDT','M10 · M20','C','DOC-005P,DOC-006Q,DOC-007P,DOC-008Q,SHP-00025S','About 40% of M10 and 30% of M20. Same parent and same die source as Aster, so not a truly independent second source.'],
+['COB','NDT','C10','C','DOC-009P,DOC-010Q,SHP-00050S','Sole source (about 100%) of the control board used in all three products.'],
+['GRO','NDT','B10','C','DOC-017P,DOC-018Q','About 80% of the battery-monitoring board for P3.'],
+['HSE','NDT','B10','C','DOC-019P,DOC-020Q','About 20% of B10 for P3. Shares Jade substrate with Grove.'],
+['DCW','NDT','C20','C','DOC-011P,DOC-012Q,SHP-00062S','Sole source (about 100%) of DC-link capacitors for P1,P2. The 2022 housing pilot expired 31 Dec 2023 (DOC-080) and is not a current H10 link.'],
+['EST','NDT','H20','C','DOC-013P,DOC-014Q','Sole source (about 100%) of cooling assemblies for P2,P3. No shipment sample in the extract.'],
+['FOR','NDT','H10','C','DOC-015P,DOC-016Q','Sole source (about 100%) of housings for P1.'],
+['ION','AST','Power semiconductor dies','C','DOC-021D',SD+' Dies come from SITE-074 (Z01); SITE-900 is a pilot line on a different process and is not a qualified replacement.',[X78,['SHP-00125','2025-04-07','Shipment observation','Harbor Freight Services (consolidator) shipped “M10;M20 / Power semiconductor dies” to Aster. Logistics only: corroborates the flow, but Harbor Freight is not a manufacturer (DOC-083).']]],
+['ION','BOR','Power semiconductor dies','C','DOC-023D',SD+' Same die family as the Aster link.',[X78]],
+['JAD','COB','Printed circuit substrates','C','DOC-025D',SD+' Plant is SITE-081 (Z01); the Z07 head office does not manufacture.',[X79]],
+['JAD','GRO','Printed circuit substrates','C','DOC-027D',SD,[X79]],['JAD','HSE','Printed circuit substrates','C','DOC-029D',SD,[X79]],
+['KES','COB','Microcontrollers','C','DOC-031D',SD],['KES','GRO','Microcontrollers','C','DOC-033D',SD],
+['LUM','AST','Magnetic cores','C','DOC-035D',SD],['LUM','BOR','Magnetic cores','C','DOC-037D',SD],
+['MER','DCW','Dielectric film','C','DOC-039D',SD],['NAC','DCW','Aluminum foil','C','DOC-041D',SD],
+['ORI','AST','Ceramic substrates','C','DOC-043D',SD],['ORI','BOR','Ceramic substrates','C','DOC-045D',SD],
+['PIN','EST','Thermal metals','C','DOC-047D',SD],['QUA','FOR','Aluminum alloy','C','DOC-049D',SD],['RIL','COB','Connectors','C','DOC-051D',SD],
+['SOL','GRO','Isolation optics (sample only)','H','DOC-085',"Hypothesis. A sample evaluation was completed but no serial-production award exists, so do not treat it as a supply link.",[['DOC-085','2025-09-25','Company clarification','Solace completed a sample evaluation with Grove. No serial award announced; a current B10 production link is not substantiated.']]],
+['UMB','ION','Silicon-carbide wafers','C','DOC-056D',SD],
+['VER','ION','Process gases (candidate)','K','DOC-058',"Inferred. Verdant lists IonPeak as an industrial customer and mentions M10/M20 applications, but does not identify the receiving line. Product and continuity scope need validation.",[['DOC-058','2025-08-14','Customer program index','Verdant lists IonPeak among industrial customers; index mentions M10/M20 but does not allocate purchases or name the line.']]],
+['WAR','JAD','Copper foil','C','DOC-060D',SD],['XEN','JAD','Resin','C','DOC-064D',SD],['YAR','ORI','Specialty minerals','C','DOC-066D',SD],['ZEN','MER','Polymer','C','DOC-070D',SD],
+['ALD','QUA','Bauxite (unverified)','L','DOC-074',"Research lead only. Both appear in a trade directory; no purchase, award, product or facility link is stated, and Quartz does not name its bauxite sources.",[['DOC-074','2025-08-14','Trade directory','Alder lists aluminum alloy among target sectors; Quartz is in the same directory. No relationship stated.'],['DOC-086','2025-08-14','Company website excerpt','Quartz confirms alloy processing but does not identify bauxite sources; association membership is not a supplier declaration.']]],
+['CSH','AST','Ownership','O','DOC-075',"CommonSpan consolidates Aster and Boreal as controlled subsidiaries: separate brands, same ultimate owner. It owns them but does not make or supply parts.",[['DOC-075','2025-09-01','Corporate registry','CommonSpan Holdings consolidates Aster Power Assemblies and Boreal Power Systems as controlled subsidiaries.']]],
+['CSH','BOR','Ownership','O','DOC-075','Same ownership statement as above.',[['DOC-075','2025-09-01','Corporate registry','CommonSpan Holdings consolidates Aster Power Assemblies and Boreal Power Systems as controlled subsidiaries.']]],
+['NDT','P1','Final product','C','','NovaDrive builds P1 at Harbor Works (60%) and Plateau Works (40%).'],
+['NDT','P2','Final product','C','','NovaDrive builds P2 at Harbor Works (30%) and Coastal Works (70%).'],
+['NDT','P3','Final product','C','','NovaDrive builds P3 at Plateau Works (100%).']
+].map((a,i)=>({id:i,s:a[0],d:a[1],c:a[2],st:a[3],ev:a[4]?a[4].split(','):[],n:a[5],x:a[6]||[]}));
+const SHPD={'SHP-00002':'2025-02-07','SHP-00025':'2025-01-07','SHP-00050':'2025-02-07','SHP-00062':'2025-02-07'};
+function evi(e,t){const m=t.match(/[A-Z]$/),id=m?t.slice(0,-1):t,s=N[e.s],d=N[e.d];
+ if(!m){const x=e.x.find(z=>z[0]==id);return x?{id,dt:x[1],ty:x[2],tx:x[3]}:{id,dt:'',ty:'',tx:''}}
+ const k=m[0];
+ if(k=='P')return{id,dt:'2025-08-14',ty:'Program disclosure',tx:s.name+' named a production supplier to NovaDrive ('+e.c+'); award 2025–26. Planning allocation, not a purchase ledger.'};
+ if(k=='Q')return{id,dt:'2025-06-12',ty:'Qualification register',tx:s.name+' ('+s.site+') approved for NovaDrive serial production. Confirms the relationship and site, not exclusivity.'};
+ if(k=='S')return{id,dt:SHPD[id],ty:'Shipment observation',tx:s.name+' to NovaDrive Import Operations from '+s.site+'. Partial extract; weight is not a purchase share.'};
+ return{id,dt:'2025-08-14',ty:'Program disclosure',tx:d.name+' identifies '+s.name+' as an active production input supplier ('+e.c+'), 2025–26.'}}
+const SE=e=>e.st=='C'||e.st=='K';
+const up=k=>E.filter(e=>e.d==k).map(e=>e.s),dn=k=>E.filter(e=>e.s==k).map(e=>e.d);
+function walk(k,f,only){const o=new Set,q=[k];while(q.length){const c=q.pop();f(c).forEach(n=>{if(!o.has(n)){o.add(n);q.push(n)}})}return o}
+const down=k=>walk(k,c=>E.filter(e=>e.s==c&&(SE(e)||e.st=='O')).map(e=>e.d)),anc=k=>walk(k,c=>E.filter(e=>e.d==c).map(e=>e.s));
+function prods(k){const s=new Set;[k,...down(k)].forEach(n=>{(T1P[n]||'').match(/P\d/g)?.forEach(p=>s.add(p))});if(k=='NDT')['P1','P2','P3'].forEach(p=>s.add(p));return[...s]}
+const cl=(v,a=0,b=100)=>Math.max(a,Math.min(b,v));
+function score(k){const n=N[k];if(n.tier<0||n.st=='H'||n.st=='L')return null;
+ const ps=prods(k),rev=ps.reduce((a,p)=>a+PR[p][1],0)/1560*100,t1=[k,...down(k)].filter(x=>T1P[x]).length;
+ const ex=.75*rev+.25*cl(t1*33),sb=SUB[k]??55;
+ const geo=(n.hz+n.lg+n.inf)/3,fi=n.cr==null?null:(cl((2-n.cr)/1.4*100)+cl((n.nd-1)/6*100))/2;
+ const op=(cl((92-n.tl)/16*100)+cl(-n.ch/18*100))/2,ag=n.agi;
+ const P=[['Revenue exposure',ex,.25,0],['Substitutability',sb,.2,SUB[k]==null],['Geography',geo,.2,0],['Financial',fi??50,.15,fi==null],['Operations',op,.1,0],['Assurance gap',ag??50,.1,ag==null]];
+ const tot=P.reduce((a,p)=>a+p[1]*p[2],0);
+ const ids=new Set;E.forEach(e=>{if((e.s==k||e.d==k)&&e.d!='P1'&&!['P1','P2','P3'].includes(e.d))e.ev.forEach(i=>ids.add(i))});
+ let cf=Math.min(95,30+12*ids.size),why=[ids.size+' evidence record(s) on this node\'s links'];
+ if(fi==null){cf-=15;why.push('financials missing (scored neutral, not low-risk)')}if(ag==null){cf-=10;why.push('assurance gap missing')}
+ if(n.st=='K'){cf=Math.min(cf,35);why.push('link is inferred only')}
+ return{tot,P,cf:Math.max(10,cf),why,ps}}
+const SC={};Object.keys(N).forEach(k=>SC[k]=score(k));
+const band=v=>v>=60?'High':v>=45?'Medium':'Low';
+const rc=v=>`hsl(${Math.round(135-115*cl(v/80))} 75% 44%)`,cc=v=>`hsl(${Math.round(25+v*0.1)} ${Math.round(35+v*0.4)}% ${Math.round(72-v*0.3)}%)`;
+const EVT=[
+{id:'EV-001',t:'East Delta flood watch (Z01)',d:'2025-09-23',sev:'High',aff:['ION','JAD','ORI','UMB','VER'],dup:'EV-002 repeats the same bulletin (source family WX-0923) and is merged.',why:'Z01 hosts the only qualified power-die plant, the only qualified circuit-substrate plant, and their upstream wafer, ceramic and gas sites. No damage is confirmed yet.',act:'Ask IonPeak, Jade and Orion for flood-readiness status and buffer stock; confirm days of cover for M10/M20 and C10/B10.'},
+{id:'EV-003',t:'Meridian financing pressure',d:'2025-09-24',sev:'High',aff:['MER'],why:'Meridian has the weakest balance sheet in the set and feeds dielectric film to the sole C20 capacitor supplier (P1, P2). Production continues for now.',act:'Check Delta Capacitor Works film stock and qualified alternates; open a dielectric-film alternate search (8-week capacitor qualification).'},
+{id:'EV-010',t:'Gulf Arc port congestion',d:'2025-09-26',sev:'Watch',aff:[],why:'No supplier or facility in the data maps to the Gulf Arc lane, so the match is unconfirmed. Observed shipments are by ocean.',act:'Map supplier routings to Gulf Arc before escalating; delay is 3 days on average.'}];
+const SUP=[['EV-002','Duplicate of EV-001 (same bulletin republished).'],['EV-004','Ion Peak Trading (REG-NO-4128) is an unrelated broker, not IonPeak Semiconductor.'],['EV-005','Port strike from 2023 reposted; no current dispute.'],['EV-007','Jade moved its head office (Z07). Production at SITE-081 is unaffected.'],['EV-009','Concerns Delta Consumer Plastics, which is not Delta Capacitor Works.']];
+const OUT=[['Delta Consumer Plastics','Packaging trial in 2024 never became a supply award (DOC-084). Name similarity only.'],['Ion Peak Trading','Unrelated broker; not a subsidiary of IonPeak Semiconductor (DOC-077).'],['Harbor Freight Services','Freight consolidator, not a manufacturer (DOC-083).'],['IonPeak SITE-900','Pilot line on a different process; not a qualified replacement.'],['Delta housing award','Expired 31 Dec 2023; not a current H10 link.']];
+let mode='risk',sel=null,tab='i',hi=null;
+const svg=document.getElementById('g'),P=document.getElementById('p'),$=(t,a={},p=svg)=>{const e=document.createElementNS('http://www.w3.org/2000/svg',t);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e};
+function pth(a,b){const f=a.x>b.x,x1=f?a.x:a.x+a.w,x2=f?b.x+b.w:b.x,y1=a.y+a.h/2,y2=b.y+b.h/2,dx=(x2-x1)/2;return`M${x1},${y1}C${x1+dx},${y1} ${x2-dx},${y2} ${x2},${y2}`}
+function active(){let s=new Set,es=new Set;const add=k=>{s.add(k);down(k).forEach(x=>s.add(x));anc(k).forEach(x=>s.add(x))};
+ if(!sel)return null;
+ if(sel.t=='n')add(sel.id);else if(sel.t=='e'){const e=E[sel.id];add(e.s);add(e.d);s=new Set([...s].filter(x=>x==e.s||x==e.d||anc(e.s).has(x)||down(e.d).has(x)))}
+ else if(sel.t=='v'){const v=EVT.find(x=>x.id==sel.id);v.aff.forEach(k=>{s.add(k);down(k).forEach(x=>s.add(x))})}
+ let ps=sel.t=='n'?prods(sel.id):[...s].filter(x=>x[0]=='P'&&x.length==2);
+ if(s.has('NDT')&&sel.t!='n')ps=[...new Set([...s].flatMap(k=>T1P[k]?T1P[k].match(/P\d/g):[]))];
+ E.forEach(e=>{if(['P1','P2','P3'].includes(e.d)){if(s.has('NDT')&&ps.includes(e.d))es.add(e.id),s.add(e.d)}else if(s.has(e.s)&&s.has(e.d))es.add(e.id)});
+ if(sel.t=='e')es.add(sel.id);return{s,es}}
+function draw(){svg.innerHTML='';const A=active();
+ [['Tier 3 · upstream inputs',14],['Tier 2 · sub-suppliers',240],['Tier 1 · direct suppliers',470],['NovaDrive',700],['Products',860]].forEach(([t,x])=>$('text',{x,y:36,class:'col'},svg).textContent=t);
+ E.forEach(e=>{const a=N[e.s],b=N[e.d],al={AST:70,BOR:40,COB:100,GRO:80,HSE:20,DCW:100,EST:100,FOR:100}[e.s];const w=e.d=='NDT'?1.5+al/40:1.6;
+  const d=pth(a,b),dm=A&&!A.es.has(e.id)?'dim':'';
+  const st=e.st=='K'?'7 4':e.st=='H'||e.st=='L'?'2 4':e.st=='O'?'4 3':'';
+  $('path',{d,class:'e '+dm,'stroke-width':w,'stroke-dasharray':st,style:e.st=='O'?'stroke:var(--own)':sel&&sel.t=='e'&&sel.id==e.id?'stroke:var(--ac);stroke-width:4':''});
+  const h=$('path',{d,class:'eh',tabindex:0,role:'button','aria-label':a.name+' to '+b.name});h.onclick=()=>pick('e',e.id);h.onkeydown=ev=>ev.key=='Enter'&&pick('e',e.id)});
+ Object.values(N).forEach(n=>{const sc=SC[n.k],dm=A&&!A.s.has(n.k)?'dim':'';
+  const g=$('g',{class:'n '+dm+(sel&&sel.t=='n'&&sel.id==n.k?' sel':''),tabindex:0,role:'button','aria-label':n.name,transform:`translate(${n.x},${n.y})`});
+  const un=n.st=='H'||n.st=='L';
+  $('rect',{class:'b',width:n.w,height:n.h,rx:6,'stroke-dasharray':un?'3 3':'',style:n.tier==-1?'fill:var(--nd)':''},g);
+  if(sc)$('rect',{width:6,height:n.h,rx:3,fill:mode=='risk'?rc(sc.tot):cc(sc.cf)},g);
+  const tx=$('text',{x:n.tier<0?n.w/2:14,y:n.tier<0?n.h/2-1:16,'font-size':n.k=='CSH'?10.5:11,'font-weight':600,'text-anchor':n.tier<0?'middle':'start',style:n.tier==-1?'fill:#ffffff':''},g);tx.textContent=n.name;
+  if(n.tier>=0){const t2=$('text',{x:14,y:30,'font-size':9,style:'fill:var(--mu)'},g);t2.textContent=n.cap+(n.st=='K'?' · inferred':un?' · unverified':'')}
+  else if(n.tier==-2){const t2=$('text',{x:50,y:34,'font-size':9,'text-anchor':'middle',style:'fill:var(--mu)'},g);t2.textContent='$'+PR[n.k][1]+'m'}
+  if(sc){const t3=$('text',{x:n.w-6,y:16,'font-size':11,'text-anchor':'end','font-weight':600},g);t3.textContent=Math.round(mode=='risk'?sc.tot:sc.cf)}
+  g.onclick=()=>pick('n',n.k);g.onkeydown=ev=>ev.key=='Enter'&&pick('n',n.k)});}
+const b=(l,c)=>`<span class="chip" style="${c?'border-color:'+c+';color:'+c+';background:var(--ac-subtle)':''}">${l}</span>`;
+const nb=k=>`<button class="row" data-n="${k}"><b>${N[k].name}</b></button>`;
+function node(k){const n=N[k],sc=SC[k],o='';
+ const ins=E.filter(e=>e.d==k),outs=E.filter(e=>e.s==k&&!['P1','P2','P3'].includes(e.d));
+ const lk=(e,w)=>`<button class="row" data-e="${e.id}"><b>${N[w=='in'?e.s:e.d].name}</b> <span class="mu sm">· ${e.c} · ${{C:'confirmed',K:'inferred',H:'hypothesis',L:'research lead',O:'ownership'}[e.st]}</span></button>`;
+ const stt={C:'Confirmed in network',K:'Inferred (candidate)',H:'Hypothesis, not confirmed',L:'Research lead only',O:'Ownership link'}[n.st];
+ let h=`<h2>${n.name}</h2><div class="mu sm">${n.tier>0?'Tier '+n.tier+' · ':''}${n.cap}${n.site&&n.tier>=0?' · '+n.site+' ('+n.zone+')':''}</div><p>${b(stt)}${sc?b('Risk '+Math.round(sc.tot)+' · '+band(sc.tot)):''}${sc?b('Confidence '+Math.round(sc.cf)):''}</p>`;
+ if(n.k=='NDT')h+=`<p>All Tier-1 suppliers feed NovaDrive, which assembles P1, P2 and P3 ($1,560m combined revenue).</p>`;
+ if(ins.length)h+=`<h3>Supplied by</h3>`+ins.map(e=>lk(e,'in')).join('');
+ if(outs.length)h+=`<h3>Supplies</h3>`+outs.map(e=>lk(e,'out')).join('');
+ if(sc){h+=`<h3>Products exposed</h3><p>${sc.ps.map(p=>b(N[p].name+' $'+PR[p][1]+'m')).join('')||'None'}</p><h3>Why this risk score</h3>`+sc.P.map(p=>`<div class="m"><span>${p[0]}</span><i><u style="width:${p[1]}%;background:${rc(p[1]*.8)}"></u></i><span>${Math.round(p[1])}${p[3]?'*':''}</span></div>`).join('')+`<div class="sm mu">* assumed neutral: data missing, not treated as low risk. Weights: exposure 25, substitutability 20, geography 20, financial 15, operations 10, assurance gap 10.</div><h3>Why this confidence</h3><div class="sm">${sc.why.join('; ')}.</div>`}
+ else if(n.tier>=0)h+=`<h3>Risk</h3><div class="sm mu">Not scored: this entity is not a confirmed part of the network.</div>`;
+ if(n.cr!=null||n.tl!=null)h+=`<h3>Indicators</h3><div class="sm">Current ratio ${n.cr??'n/a'} · Net debt/EBITDA ${n.nd??'n/a'} · On-time shipments ${n.tl??'n/a'}% (${n.ch>0?'+':''}${n.ch} pp since Jan) · Hazard ${n.hz??'n/a'} · Logistics ${n.lg??'n/a'} · Infrastructure ${n.inf??'n/a'}</div>`;
+ const extra={ION:'Sole qualified die source for both module makers: switching assembler does not diversify die supply.',JAD:'Only qualified substrate source for C10 and B10 boards: Cobalt, Grove and HarborSense all depend on it.',CSH:'Aster and Boreal look like two sources but share one owner and one die supplier.',MER:'Weakest financials in the set (current ratio 0.62, leverage 7.2x, on-time down 17.6 pp).'}[k];
+ return(extra?`<div class="row" style="border-left:3px solid var(--ac)"><b>Key insight.</b> ${extra}</div>`:'')+h}
+function edge(id){const e=E[id],a=N[e.s],c=N[e.d];
+ let h=`<h2>${a.name} → ${c.name}</h2><div class="mu sm">${e.c}</div><p>${b({C:'Confirmed',K:'Inferred',H:'Hypothesis',L:'Research lead',O:'Ownership'}[e.st])}${e.st=='C'&&e.ev.length>1?b(e.ev.length+' evidence records'):''}</p><p>${e.n}</p>`;
+ if(e.ev.length){h+=`<h3>Evidence</h3>`+e.ev.map(t=>{const v=evi(e,t);return`<div class="ev"><b>${v.id}</b> <span class="mu sm">${v.ty} · ${v.dt}</span><div class="sm">${v.tx}</div></div>`}).join('');
+  e.x.filter(z=>!e.ev.some(t=>t.replace(/[A-Z]$/,'')==z[0])).forEach(z=>h+=`<div class="ev"><b>${z[0]}</b> <span class="mu sm">${z[2]} · ${z[1]}</span><div class="sm">${z[3]}</div></div>`)}
+ return h+`<h3>Jump to</h3>${nb(e.s)}${nb(e.d)}`}
+function alerts(){return`<h2>Risk alerts</h2><div class="mu sm">Each event is matched to a facility or zone in the network, de-duplicated, then ranked.</div><h3>Needs action</h3>`+EVT.map(v=>`<button class="row" data-v="${v.id}" style="${hi==v.id?'border-color:var(--ac)':''}"><b>${v.t}</b> ${b(v.sev,v.sev=='High'?'#ea580c':'')}<div class="sm mu">${v.id} · ${v.d}</div>${hi==v.id?`<div class="sm"><p><b>Matched to:</b> ${v.aff.length?v.aff.map(k=>N[k].name).join(', '):'no supplier (lane not mapped)'}.${v.dup?' '+v.dup:''}</p><p><b>Why it matters:</b> ${v.why}</p><p><b>Next action:</b> ${v.act}</p></div>`:''}</button>`).join('')+`<h3>Suppressed as noise</h3>`+SUP.map(s=>`<div class="row sm"><b>${s[0]}</b> ${s[1]}</div>`).join('')}
+function score_tab(){const r=Object.keys(N).filter(k=>SC[k]).sort((a,b)=>SC[b].tot-SC[a].tot);return`<h2>Scorecard</h2><div class="mu sm">Risk and evidence confidence are scored separately. Click a row to inspect.</div><table><tr><th>Supplier</th><th>Tier</th><th>Risk</th><th>Conf.</th></tr>`+r.map(k=>`<tr data-k="${k}"><td>${N[k].name}</td><td>${N[k].tier||'Own'}</td><td><b style="color:${rc(SC[k].tot*.9)}">${Math.round(SC[k].tot)}</b></td><td>${Math.round(SC[k].cf)}</td></tr>`).join('')+`</table>`}
+function home(){return`<h2>Start here</h2><p class="mu">Click a supplier or a line. Three hidden concentrations stand out:</p>${nb('ION')}<div class="sm mu" style="margin:-2px 0 8px">One die source behind both module makers.</div>${nb('JAD')}<div class="sm mu" style="margin:-2px 0 8px">One substrate source behind all control and battery boards.</div>${nb('CSH')}<div class="sm mu" style="margin:-2px 0 8px">Aster and Boreal share one owner.</div><h3>Looked related, but ruled out</h3>`+OUT.map(o=>`<div class="row sm"><b>${o[0]}</b> ${o[1]}</div>`).join('')+`<h3>Reading the web</h3><div class="sm mu">Bar colour and number show risk (0–100) or evidence confidence. Line width on Tier-1 links reflects contracted allocation. Unverified leads (Solace, Alder) are drawn but not scored.</div>`}
+function render(){P.innerHTML=tab=='a'?alerts():tab=='s'?score_tab():sel&&sel.t=='n'?node(sel.id):sel&&sel.t=='e'?edge(sel.id):home();
+ P.querySelectorAll('[data-n]').forEach(x=>x.onclick=()=>pick('n',x.dataset.n));P.querySelectorAll('[data-e]').forEach(x=>x.onclick=()=>pick('e',+x.dataset.e));
+ P.querySelectorAll('[data-k]').forEach(x=>x.onclick=()=>pick('n',x.dataset.k));P.querySelectorAll('[data-v]').forEach(x=>x.onclick=()=>{hi=hi==x.dataset.v?null:x.dataset.v;sel=hi?{t:'v',id:hi}:null;draw();render()});
+ document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x.dataset.t==tab))}
+function pick(t,id){sel=sel&&sel.t==t&&sel.id==id?null:{t,id};tab='i';draw();render()}
+document.querySelectorAll('.tabs button').forEach(x=>x.onclick=()=>{tab=x.dataset.t;render()});
+document.querySelectorAll('.seg button').forEach(x=>x.onclick=()=>{mode=x.dataset.m;document.querySelectorAll('.seg button').forEach(y=>y.classList.toggle('on',y==x));draw()});
+document.querySelectorAll('.theme-seg button').forEach(btn=>{
+  btn.onclick=()=>{
+    const t=btn.dataset.theme;
+    document.documentElement.setAttribute('data-theme',t);
+    document.querySelectorAll('.theme-seg button').forEach(b=>b.classList.toggle('on',b===btn));
+  };
+});
+draw();render();
+</script>
+</body>
+</html>

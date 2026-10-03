@@ -1,0 +1,6 @@
+{
+  "name": "NovaDrive Supplier Web",
+  "description": "Interactive multi-tier supply chain network and risk exposure visualization for NovaDrive.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
